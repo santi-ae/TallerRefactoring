@@ -6,15 +6,16 @@ public class Persona {
     private String telefono;
     private String correoElectronico;
 
-    public Persona(String nombre, int edad, String genero, String direccion, String telefono, String correoElectronico) {
-        this.nombre = nombre;
-        this.edad = edad;
-        this.genero = genero;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.correoElectronico = correoElectronico;
-    }
 
+
+    public Persona(String nombre, int edad, String genero, String direccion, String telefono, String correoElectronico) {
+        setNombre(nombre);
+        setEdad(edad);
+        setGenero(genero);
+        setDireccion(direccion);
+        setTelefono(telefono);
+        setCorreoElectronico(correoElectronico);
+    }
     public String getNombre() {
         return nombre;
     }
@@ -63,3 +64,5 @@ public class Persona {
         this.correoElectronico = correoElectronico;
     }
 }
+
+
