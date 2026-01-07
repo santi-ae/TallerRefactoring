@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SistemaAtencionMedico {
+    // REPLACE MAGIC NUMBER WITH SYMBOLIC CONSTANT
+    private static final double DESCUENTO_ADULTO_MAYOR = 0.25; // 25%
+
     private List<Paciente> pacientes;
     private List<Medico> medicos;
     private List<ServicioMedico> serviciosMedicos;
@@ -24,44 +27,54 @@ public class SistemaAtencionMedico {
         serviciosMedicos.add(servicioMedico);
     }
 
-    public void agendarConsulta(Paciente paciente, Consulta consulta){
+    // ENCAPSULATE COLLECTION - Método mejorado que respeta encapsulación
+    public void agendarConsulta(Paciente paciente, Consulta consulta) {
         double costoConsulta = consulta.getServicioMedico().getCosto();
-        int edadPaciente = paciente.getEdad();
-        costoConsulta = calcularValorFinalConsulta(costoConsulta,edadPaciente);
-        System.out.println("Se han cobrado "+ costoConsulta+ " dolares de su tarjeta de credito");
-        paciente.historialMedico.getConsultas().add(consulta); //Hacer esto es incorrecto
+        // PRESERVE WHOLE OBJECT - Pasamos el paciente completo, no extraemos datos
+        costoConsulta = calcularValorFinalConsulta(costoConsulta, paciente);
+        System.out.println("Se han cobrado " + costoConsulta + " dolares de su tarjeta de credito");
+        
+        paciente.agregarConsultaAlHistorial(consulta);
     }
 
-    public double calcularValorFinalConsulta(double costoConsulta, int edadPaciente){
+    // REPLACE MAGIC NUMBER WITH SYMBOLIC CONSTANT
+    public double calcularValorFinalConsulta(double costoConsulta, Paciente paciente) {
         double valorARestar = 0;
-        if(edadPaciente>=65){
-            valorARestar = costoConsulta*0.25; //0.25 es el descuento para adultos mayores
+        // Usa el método esAdultoMayor() existente en Paciente - no duplica lógica
+        if (paciente.esAdultoMayor()) {
+            valorARestar = costoConsulta * DESCUENTO_ADULTO_MAYOR;
         }
-        return costoConsulta-valorARestar;
+        return costoConsulta - valorARestar;
     }
 
-    // se puede parametrizar (obtener...)
-    public Paciente obtenerPaciente(String nombrePaciente) {
-        for(Paciente paciente : pacientes){
-            if (paciente.getNombre().equals(nombrePaciente))
-                return paciente;
+    // PARAMETERIZE METHOD - Unificamos los tres métodos de búsqueda
+    // Ahora usamos un método genérico que funciona con cualquier lista
+    private <T> T obtenerPorNombre(List<T> lista, String nombre) {
+        for (T elemento : lista) {
+            if (elemento instanceof Persona) {
+                Persona persona = (Persona) elemento;
+                if (persona.getNombre().equals(nombre)) {
+                    return elemento;
+                }
+            } else if (elemento instanceof ServicioMedico) {
+                ServicioMedico servicio = (ServicioMedico) elemento;
+                if (servicio.getNombre().equals(nombre)) {
+                    return elemento;
+                }
+            }
         }
         return null;
+    }
+
+    public Paciente obtenerPaciente(String nombrePaciente) {
+        return obtenerPorNombre(pacientes, nombrePaciente);
     }
 
     public ServicioMedico obtenerServicioMedico(String nombreServicio) {
-        for(ServicioMedico servicioMedico : serviciosMedicos){
-            if (servicioMedico.getNombre().equals(nombreServicio))
-                return servicioMedico;
-        }
-        return null;
+        return obtenerPorNombre(serviciosMedicos, nombreServicio);
     }
 
     public Medico obtenerMedico(String nombreMedico) {
-        for(Medico medico : medicos){
-            if (medico.getNombre().equals(nombreMedico))
-                return medico;
-        }
-        return null;
+        return obtenerPorNombre(medicos, nombreMedico);
     }
 }

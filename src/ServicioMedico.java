@@ -1,4 +1,8 @@
 public class ServicioMedico {
+    // REPLACE MAGIC NUMBER WITH SYMBOLIC CONSTANT
+    private static final double COSTO_MINIMO = 0.0;
+    private static final int DURACION_MINIMA = 0;
+
     private String nombre;
     private String descripcion;
     private double costo;
@@ -7,9 +11,8 @@ public class ServicioMedico {
     public ServicioMedico(String nombre, String descripcion, double costo, int duracion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
-        // Ojo que las dos asignaciones de abajo deben de tener logica de validacion en el setter, esos valores no pueden ser negativos
-        this.costo = costo;
-        this.duracion = duracion;
+        setCosto(costo);
+        setDuracion(duracion);
     }
 
     public String getNombre() {
@@ -32,9 +35,10 @@ public class ServicioMedico {
         return costo;
     }
 
+    // ENCAPSULATE FIELD - Validación consistente
     public void setCosto(double costo) {
-        if(costo<0){
-            System.out.println("El costo no puede ser menor a 0");
+        if (costo < COSTO_MINIMO) {
+            System.out.println("El costo no puede ser menor a " + COSTO_MINIMO);
             return;
         }
         this.costo = costo;
@@ -44,8 +48,12 @@ public class ServicioMedico {
         return duracion;
     }
 
+    // ENCAPSULATE FIELD - Ahora valida como se indicaba en el comentario original
     public void setDuracion(int duracion) {
-
+        if (duracion < DURACION_MINIMA) {
+            System.out.println("La duración no puede ser menor a " + DURACION_MINIMA + " minutos");
+            return;
+        }
         this.duracion = duracion;
     }
 }
